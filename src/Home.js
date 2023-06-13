@@ -1,53 +1,8 @@
 import './Home.css';
 import React, { useState, useEffect } from 'react';
-import YouTube from 'react-youtube';
+import YoutubeIframe from "./YoutubeIframe.tsx";
+import { Link } from "react-router-dom";
 
-
-class VideoComponent extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            isLoaded: false,
-        };
-    }
-
-    handleOnReady = () => {
-        this.setState({ isLoaded: true });
-    };
-
-
-    render() {
-        const { videoId } = this.props;
-        const { isLoaded } = this.state;
-        const { width, height } = this.props;
-
-        const opts = {
-            height: `${((height * 40) / 100)}`,
-            width: `${width - ((width * 10) / 100)}`,
-            playerVars: {
-                autoplay: 0,
-            },
-        };
-
-        return (
-            <>
-                {!isLoaded && (
-                    <img style={{ height: `${((height * 40) / 100)}px`, width: `${width - ((width * 10) / 100)}px`, objectFit: 'cover' }} src={`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`} alt="Thumbnail" />
-                )}
-                <div
-                    style={{ display: isLoaded ? 'block' : 'none' }}
-                >
-                    <YouTube
-                        videoId={videoId}
-                        onReady={this.handleOnReady}
-                        opts={opts}
-                    />
-                </div>
-            </>
-        );
-    }
-}
 
 const Button = ({ f1Info }) => {
     const [showPopup, setShowPopup] = useState(false);
@@ -155,50 +110,31 @@ function Home() {
         "Technical Regulations: F1 cars must meet specific rules regarding dimensions, weight, engines, aerodynamics, and safety."
     ];
 
-    useEffect(() => {
-        const handleResize = () => {
-            const CWindowWidth = window.innerWidth;
-            const CWindowHeight = window.innerHeight
-            setWindowHeight(CWindowHeight);
-            setWindowWidth(CWindowWidth)
-        };
 
-        // Initial calculation on component mount
-        handleResize();
-
-        window.addEventListener('resize', handleResize);
-
-        // Clean up the event listener on component unmount
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
 
     const limitedF1Info = f1Info.slice(0, 4);
 
     return (
         <div className='home'>
-            <div className='videoComponent'>
-                <VideoComponent videoId="6tbUo_7JfEg" width={windowWidth} height={windowHeight} />
-            </div>
-            <h1 style={{ color: 'white', textAlign: 'center', margin: 0 }}>Rules</h1>
+            <div className='videoComponent'></div>
+            <YoutubeIframe videoId={"6tbUo_7JfEg"} videoTitle={"Rules of FORMULA One (F1) EXPLAINED : F1 Race Rules : Formula 1"} />
+            <h1 style={{ color: 'rgb(255, 0, 0)', textAlign: 'center', margin: 0}}>Rules</h1>
             <div style={{ padding: '0vh 5vw 0vh 5vw' }}>
                 <ol>
                     {limitedF1Info.map((item, index) => (
-                        <li className='mainFont' style={{marginBottom: '15px'}}  key={index}>{item}</li>
+                        <li className='mainFont' style={{marginBottom: '10px'}}  key={index}>{item}</li>
                     ))}
                 </ol>
             </div>
             <Button f1Info={f1Info} />
-            <div
-                className="prediction-button"
+            <Link
                 style={{
                     position: 'fixed',
                     top: '3vh',
                     right: '5vw',
-                    backgroundColor: '#A6051A',
+                    backgroundColor: 'rgb(255, 0, 0)',
                     borderRadius: '5px',
-                    padding: '5px',
+                    padding: '5px 20px 5px 20px',
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -206,9 +142,10 @@ function Home() {
                     fontWeight: 'bold',
                     cursor: 'pointer',
                 }}
+                to={'/Prediction'}
             >
                 Prediction
-            </div>
+            </Link>
         </div>
     )
 }
