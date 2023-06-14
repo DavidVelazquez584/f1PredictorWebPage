@@ -157,7 +157,7 @@ const F1Predictor = ({ width }) => {
     })
       .then(response => {
         console.log('Success:', response.data);
-        setRaceResults(JSON.parse(response.data))
+        setRaceResults(JSON.parse(response.data).sort((a, b) => a.Position - b.Position));
         setLoading(false)
       })
       .catch(error => {
@@ -299,7 +299,7 @@ const F1Predictor = ({ width }) => {
             </thead>
             <tbody>
               {raceResults.map((result, index) => (
-                <tr key={result.Position}>
+                <tr key={result.Position+result.Driver+result.Contsturctor}>
                   <td
                     style={{
                       fontSize: '0.8rem',
