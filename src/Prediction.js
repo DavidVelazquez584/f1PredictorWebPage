@@ -97,14 +97,37 @@ const Button = ({ f1Info }) => {
 };
 
 const F1Predictor = ({ width }) => {
-  const years = [2021, 2022, 2023];
-  const grandPrixes = ['Monaco', 'Italy', 'Japan'];
+  const years = [2021, 2022];
+  const grandPrixes = [
+    "Bahrain International Circuit",
+    "Autodromo Enzo e Dino Ferrari",
+    "Autódromo Internacional do Algarve",
+    "Circuit de Barcelona-Catalunya",
+    "Circuit de Monaco",
+    "Baku City Circuit",
+    "Circuit Paul Ricard",
+    "Red Bull Ring",
+    "Silverstone Circuit",
+    "Hungaroring",
+    "Circuit de Spa-Francorchamps",
+    "Circuit Park Zandvoort",
+    "Autodromo Nazionale di Monza",
+    "Sochi Autodrom",
+    "Marina Bay Street Circuit",
+    "Suzuka Circuit",
+    "Circuit of the Americas",
+    "Autódromo Hermanos Rodríguez",
+    "Autódromo Internacional Nelson Piquet",
+    "Jeddah Street Circuit",
+    "Yas Marina Circuit"
+  ];
   const climates = ['Sunny', 'Rainy', 'Cloudy'];
 
   const [selectedYear, setSelectedYear] = useState('');
   const [selectedGrandPrix, setSelectedGrandPrix] = useState('');
   const [selectedClimate, setSelectedClimate] = useState('');
   const [raceResults, setRaceResults] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const handleYearChange = (event) => {
     setSelectedYear(event.target.value);
@@ -119,21 +142,28 @@ const F1Predictor = ({ width }) => {
   };
 
   const handlePrediction = () => {
+    setLoading(true)
     console.log('Performing prediction...');
     console.log('Selected Year:', selectedYear);
     console.log('Selected Grand Prix:', selectedGrandPrix);
     console.log('Selected Climate:', selectedClimate);
 
-    // Simulating race results
-    const results = [
-      { position: 1, driver: 'Lewis Hamilton' },
-      { position: 2, driver: 'Max Verstappen' },
-      { position: 3, driver: 'Checo Perez' },
-      { position: 4, driver: 'Valtteri Bottas' },
-      { position: 5, driver: 'George Russell' },
-    ];
-
-    setRaceResults(results);
+    axios.get(`http://140.84.165.105:8443/predict`, {
+      params: {
+        circuit: selectedGrandPrix,
+        year: selectedYear,
+        weather: selectedClimate
+      }
+    })
+      .then(response => {
+        console.log('Success:', response.data);
+        setRaceResults(JSON.parse(response.data))
+        setLoading(false)
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        setLoading(false)
+      });
   };
 
   return (
@@ -245,12 +275,13 @@ const F1Predictor = ({ width }) => {
           fontSize: '1.5rem',
           borderRadius: '5px',
         }}
+        disabled={loading} // Disable the button while loading
       >
-        Predict
+        {loading ? 'Loading...' : 'Predict'}
       </button>
 
       {raceResults.length > 0 && (
-        <div style={{ width: '80%', marginTop: '20px' }}>
+        <div style={{ width: '80%', marginTop: '20px', overflowY: 'auto' }}>
           <table
             style={{
               margin: '0 auto',
@@ -259,37 +290,49 @@ const F1Predictor = ({ width }) => {
               borderCollapse: 'collapse',
             }}
           >
-            <thead style={{ backgroundColor: 'rgb(255, 0, 0)' }}>
+            <thead style={{ backgroundColor: 'rgb(2255, 77, 85)' }}>
               <tr>
-                <th style={{ color: 'white', fontSize: '1.5rem', padding: '10px', border: '1px solid black' }}>Position</th>
-                <th style={{ color: 'white', fontSize: '1.5rem', padding: '10px', border: '1px solid black' }}>Driver</th>
+                <th style={{ color: 'white', fontSize: '0.9rem', padding: '10px', border: '1px solid black' }}>Pos</th>
+                <th style={{ color: 'white', fontSize: '0.9rem', padding: '10px', border: '1px solid black' }}>Driver</th>
+                <th style={{ color: 'white', fontSize: '0.9rem', padding: '10px', border: '1px solid black' }}>Constructor</th> {/* New column */}
               </tr>
             </thead>
             <tbody>
               {raceResults.map((result, index) => (
-                <tr key={result.position}>
+                <tr key={result.Position}>
                   <td
                     style={{
-                      fontSize: '1.5rem',
+                      fontSize: '0.8rem',
                       padding: '10px',
                       border: '1px solid black',
-                      backgroundColor: index === 0 ? 'rgba(255, 235, 0, 0.7)' : 'rgba(255, 235, 0, 0.7)',
+                      backgroundColor: index === 0 ? '#FDFCDC' : '#FDFCDC',
                       color: 'black',
                     }}
                   >
-                    {result.position}
+                    {result.Position}
                   </td>
                   <td
                     style={{
-                      fontSize: '1.5rem',
+                      fontSize: '0.8rem',
                       padding: '10px',
                       border: '1px solid black',
-                      backgroundColor: index === 0 ? 'rgba(255, 235, 0, 0.7)' : 'rgba(255, 235, 0, 0.7)',
+                      backgroundColor: index === 0 ? '#FED9B7' : '#FED9B7',
                       color: 'black',
                     }}
                   >
-                    {result.driver}
+                    {result.Driver}
                   </td>
+                  <td
+                    style={{
+                      fontSize: '0.8rem',
+                      padding: '10px',
+                      border: '1px solid black',
+                      backgroundColor: index === 0 ? '#FED9B7' : '#FED9B7',
+                      color: 'black',
+                    }}
+                  >
+                    {result.Constructor}
+                  </td> {/* New column */}
                 </tr>
               ))}
             </tbody>
