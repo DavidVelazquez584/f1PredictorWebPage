@@ -1,5 +1,5 @@
 import './Home.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import YoutubeIframe from "./YoutubeIframe.tsx";
 import { Link } from "react-router-dom";
 
@@ -94,9 +94,6 @@ const Button = ({ f1Info }) => {
 };
 
 function Home() {
-
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-    const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
     const f1Info = [
         "Race Weekend: A typical F1 race weekend consists of practice sessions, qualifying, and the main race.",

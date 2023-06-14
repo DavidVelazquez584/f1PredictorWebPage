@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Prediction.css';
 import raceImage from './ORBRaceImg.jpg';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Button = ({ f1Info }) => {
   const [showPopup, setShowPopup] = useState(false);
